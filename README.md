@@ -9,4 +9,5 @@ Ihrer Energieverbraucher einfach, schnell und übersichtlich zu verwalten.
 Funktionen:
 -----------
 - Anlegen, Ändern und Löschen von Zählern und Zählerständen
+- Vorkonfigurierte Zählerart (Gas, Nahwärme, Solarstrom, Strom, Wasser, Heizöl, Pellets)
 - Zuordnung von Zählerkategorien
