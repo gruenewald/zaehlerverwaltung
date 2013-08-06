@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- FontAwesome - http://fortawesome.github.io/Font-Awesome/ -->
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+
+    <!-- jQueryMobileCSS - original without styling -->
+    <link rel="stylesheet" href="css/jquerymobile.css" />
+
+    <!-- nativeDroid core CSS -->
+    <link rel="stylesheet" href="css/jquerymobile.nativedroid.css" />
+
+    <!-- nativeDroid: Light/Dark -->
+    <link rel="stylesheet" href="css/jquerymobile.nativedroid.light.css"  id='jQMnDTheme' />
+
+    <!-- nativeDroid: Color Schemes -->
+    <link rel="stylesheet" href="css/jquerymobile.nativedroid.color.blue.css" id='jQMnDColor' />
+
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+    <style>
+        .ui-header.ui-fixed-hidden, .ui-footer.ui-fixed-hidden {
+            padding: 0px 0px 0px 0px;
+        }
+    </style>
+    <title>Verbraucherz&auml;hler</title>
+</head>
+<body>
+
+<!-- PAGE ZAEHLER_UEBERSICHT --->
+<div id="zaehler_uebersicht" data-role="page" data-theme='b'>
+    <!-- Panel -->
+    <div data-role="panel" id="zaehler_uebersicht_menu" data-theme="b">
+        <ul data-role="listview">
+            <li data-role="list-divider">Einstellungen</li>
+            <li data-icon="folder-open"><a href="#zaehlerkategorie_uebersicht">Zählerkategorien</a></li>
+            <li data-icon="gear"><a href="#">Zählerarten</a></li>
+        </ul>
+    </div>
+    <!-- Header -->
+    <div id="zaehler_uebersicht_header" data-role="header" data-position="fixed" data-theme='b'>
+        <a href="#zaehler_uebersicht_menu"><i class='icon-ellipsis-vertical'></i></a>
+        <h1>Zählerübersicht</h1>
+    </div>
+    <!-- Content -->
+    <div id="zaehler_uebersicht_content" data-role="content">
+        <ul id="zaehler_uebersicht_listview" data-role="listview" data-inset="false" data-split-icon="gear" data-split-theme="b">
+        </ul>
+    </div>
+    <!-- Footer -->
+    <div id="zaehler_uebersicht_footer" data-position="fixed" data-role="footer" data-theme='b'>
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#zaehler_anlegen" data-icon="plus" data-transition="flip">Anlegen</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE ZAEHLERSTAND_UEBERSICHT --->
+<div id="zaehlerstand_uebersicht" data-role="page" data-theme='b'>
+    <!-- Header -->
+    <div id="zaehlerstaende_header" data-role="header" data-position="fixed" data-theme='b'>
+        <a href="#zaehler_uebersicht"><i class='icon-time'></i></a>
+        <h1>Zählerstände</h1>
+    </div>
+    <!-- Content -->
+    <div id="zaehlerstand_uebersicht_content" data-role="content">
+        <ul id="zaehlerstand_uebersicht_listview" data-role="listview" data-inset="true" data-divider-theme="b" data-icon="gear">
+        </ul>
+    </div>
+    <!-- Footer -->
+    <div id="zaehlerstand_uebersicht_footer" data-position="fixed" data-role="footer" data-theme='b'>
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#zaehler_uebersicht" data-icon="chevron-left" data-transition="slide" data-direction="reverse">Zurück</a></li>
+                <li><a href="#zaehlerstand_uebersicht" data-icon="bar-chart" data-transition="flip">Auswertung</a></li>
+                <li><a href="#zaehlerstand_erfassen" data-icon="plus" data-transition="flip">Erfassen</a></li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<!-- PAGE ZAEHLER_ANLEGEN --->
+<div id="zaehler_anlegen" data-role="page" data-theme='b'>
+    <!-- Header -->
+    <div id="zaehler_anlegen_header" data-role="header" data-position="fixed" data-theme='b'>
+        <a href="#zaehler_uebersicht"><i class='icon-time'></i></a>
+        <h1>Zähler anlegen</h1>
+    </div>
+    <!-- Content -->
+    <div id="zaehler_anlegen_content" data-role="content">
+        <form>
+            <ul data-role="listview" data-inset="true">
+                <li data-role="fieldcontain">
+                    <label for="zaehler_anlegen_content_art" class="select">Art</label>
+                    <select id="zaehler_anlegen_content_art" name="zaehler_anlegen_content_art" data-clear-btn="false">
+                    </select>
+                </li>
+                <li data-role="fieldcontain">
+                    <label for="zaehler_anlegen_content_name">Nummer</label>
+                    <input type="number" id="zaehler_anlegen_content_name" name="zaehler_anlegen_content_name=" value="" data-clear-btn="false">
+                </li>
+            </ul>
+        </form>
+    </div>
+    <!-- Footer -->
+    <div id="zaehler_anlegen_footer" data-position="fixed" data-role="footer" data-theme='b'>
+        <div data-role="navbar">
+            <ul>
+                <li><a id="zaehler_anlegen_abbrechen" href="#zaehler_uebersicht" data-icon="chevron-left" data-transition="flip" data-direction="reverse">Zurück</a></li>
+                <li><a id="zaehler_anlegen_speichern" href="#zaehler_uebersicht" data-icon="ok" data-transition="flip" data-direction="reverse">Speichern</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE ZAEHLER_VERWALTEN --->
+<div id="zaehler_verwalten" data-role="page" data-theme='b'>
+    <!-- Header -->
+    <div id="zaehler_verwalten_header" data-role="header" data-position="fixed" data-theme='b'>
+        <a href="#zaehler_uebersicht"><i class='icon-time'></i></a>
+        <h1>Zähler bearbeiten</h1>
+    </div>
+    <!-- Content -->
+    <div id="zaehler_verwalten_content" data-role="content">
+        <form>
+            <ul data-role="listview" data-inset="true">
+                <li data-role="fieldcontain">
+                    <label for="zaehler_verwalten_content_art" class="select">Art</label>
+                    <select id="zaehler_verwalten_content_art" name="zaehler_verwalten_content_art" data-clear-btn="false">
+                    </select>
+                </li>
+                <li data-role="fieldcontain">
+                    <label for="zaehler_verwalten_content_name">Nummer</label>
+                    <input type="number" id="zaehler_verwalten_content_name" name="zaehler_verwalten_content_name" value="" data-clear-btn="false">
+                </li>
+            </ul>
+        </form>
+    </div>
+    <!-- Footer -->
+    <div id="zaehler_verwalten_footer" data-position="fixed" data-role="footer" data-theme='b'>
+        <div data-role="navbar">
+            <ul>
+                <li><a id="zaehler_verwalten_abbrechen" href="#zaehler_uebersicht" data-icon="chevron-left" data-transition="flip" data-direction="reverse">Zurück</a></li>
+                <li><a id="zaehler_verwalten_loeschen" href="#zaehler_uebersicht" data-icon="remove" data-transition="flip" data-direction="reverse">Löschen</a></li>
+                <li><a id="zaehler_verwalten_speichern" href="#zaehler_uebersicht" data-icon="ok" data-transition="flip" data-direction="reverse">Speichern</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE ZAEHLERSTAND_ERFASSEN --->
+<div id="zaehlerstand_erfassen" data-role="page" data-theme='b'>
+    <!-- Header -->
+    <div id="zaehlerstand_erfassen_header" data-role="header" data-position="fixed" data-theme='b'>
+        <a href="#zaehler_uebersicht"><i class='icon-time'></i></a>
+        <h1>Zählerstand erfassen</h1>
+    </div>
+    <!-- Content -->
+    <div id="zaehlerstand_erfassen_content" data-role="content">
+        <form>
+            <ul data-role="listview" data-inset="true">
+                <li data-role="fieldcontain">
+                    <label for="ablesung_am" class="select">Datum</label>
+                    <input type="date" id="ablesung_am" name="ablesung_am" value="" data-clear-btn="false">
+                </li>
+                <li data-role="fieldcontain">
+                    <label for="ablesung_um" class="select">Uhrzeit</label>
+                    <input type="time" id="ablesung_um" name="ablesung_um" value="" data-clear-btn="false">
+                </li>
+                <li data-role="fieldcontain">
+                    <label for="stand" class="select">Zählerstand</label>
+                    <input type="number" id="stand" name="stand" value="" data-clear-btn="false">
+                </li>
+                <li data-role="fieldcontain">
+                    <label for="notiz" class="select">Notiz</label>
+                    <input type="text" id="notiz" name="notiz" value="" data-clear-btn="false">
+                </li>
+            </ul>
+        </form>
+    </div>
+    <!-- Footer -->
+    <div id="zaehlerstand_erfassen_footer" data-position="fixed" data-role="footer" data-theme='b'>
+        <div data-role="navbar">
+            <ul>
+                <li><a id="zaehlerstand_erfassen_abbrechen" href="#zaehlerstand_uebersicht" data-icon="chevron-left" data-transition="flip" data-direction="reverse">Zurück</a></li>
+                <li><a id="zaehlerstand_erfassen_speichern" href="#zaehlerstand_uebersicht" data-icon="ok" data-transition="flip" data-direction="reverse">Speichern</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE ZAEHLERSTAND_BEARBEITEN --->
+<div id="zaehlerstand_bearbeiten" data-role="page" data-theme='b'>
+    <!-- Header -->
+    <div id="zaehlerstand_bearbeiten_header" data-role="header" data-position="fixed" data-theme='b'>
+        <a href="#zaehler_uebersicht"><i class='icon-time'></i></a>
+        <h1>Zählerstand bearbeiten</h1>
+    </div>
+    <!-- Content -->
+    <div id="zaehlerstand_bearbeiten_content" data-role="content">
+        <form>
+            <ul data-role="listview" data-inset="true">
+                <li data-role="fieldcontain">
+                    <label for="zaehlerstand_bearbeiten_content_ablesung_am" class="select">Datum</label>
+                    <input type="date" id="zaehlerstand_bearbeiten_content_ablesung_am" name="zaehlerstand_bearbeiten_content_ablesung_am" value="" data-clear-btn="false">
+                </li>
+                <li data-role="fieldcontain">
+                    <label for="zaehlerstand_bearbeiten_content_ablesung_um" class="select">Uhrzeit</label>
+                    <input type="time" id="zaehlerstand_bearbeiten_content_ablesung_um" name="zaehlerstand_bearbeiten_content_ablesung_um" value="" data-clear-btn="false">
+                </li>
+                <li data-role="fieldcontain">
+                    <label for="zaehlerstand_bearbeiten_content_stand" class="select">Zählerstand</label>
+                    <input type="number" id="zaehlerstand_bearbeiten_content_stand" name="zaehlerstand_bearbeiten_content_stand" value="" data-clear-btn="false">
+                </li>
+                <li data-role="fieldcontain">
+                    <label for="zaehlerstand_bearbeiten_content_notiz" class="select">Notiz</label>
+                    <input type="text" id="zaehlerstand_bearbeiten_content_notiz" name="zaehlerstand_bearbeiten_content_notiz" value="" data-clear-btn="false">
+                </li>
+            </ul>
+        </form>
+    </div>
+    <!-- Footer -->
+    <div id="zaehlerstand_bearbeiten_footer" data-position="fixed" data-role="footer" data-theme='b'>
+        <div data-role="navbar">
+            <ul>
+                <li><a id="zaehlerstand_bearbeiten_abbrechen" href="#zaehlerstand_uebersicht" data-icon="chevron-left" data-transition="flip" data-direction="reverse">Zurück</a></li>
+                <li><a id="zaehlerstand_bearbeiten_loeschen" href="#zaehlerstand_uebersicht" data-icon="remove" data-transition="flip" data-direction="reverse">Löschen</a></li>
+                <li><a id="zaehlerstand_bearbeiten_speichern" href="#zaehlerstand_uebersicht" data-icon="ok" data-transition="flip" data-direction="reverse">Speichern</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE ZAEHLERKATEGORIE_UEBERSICHT -->
+<div id="zaehlerkategorie_uebersicht" data-role="page" data-theme='b'>
+    <!-- Header -->
+    <div id="zaehlerkategorie_uebersicht_header" data-role="header" data-position="fixed" data-theme='b'>
+        <a href="#zaehler_uebersicht"><i class='icon-time'></i></a>
+        <h1>Zählerkategorien</h1>
+    </div>
+    <!-- Content -->
+    <div id="zaehlerkategorie_uebersicht_content" data-role="content">
+        <ul id="zaehlerkategorie_uebersicht_listview" data-role="listview" data-inset="true" data-divider-theme="b" data-icon="gear">
+        </ul>
+    </div>
+    <!-- Footer -->
+    <div id="zaehlerkategorie_uebersicht_footer" data-position="fixed" data-role="footer" data-theme='b'>
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#zaehler_uebersicht" data-icon="chevron-left" data-transition="slide" data-direction="reverse">Zurück</a></li>
+                <li><a href="#zaehlerkategorie_anlegen" data-icon="plus" data-transition="flip">Anlegen</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE ZAEHLERKATEGORIE_ANLEGEN -->
+<div id="zaehlerkategorie_anlegen" data-role="page" data-theme='b'>
+    <!-- Header -->
+    <div id="zaehlerkategorie_anlegen_header" data-role="header" data-position="fixed" data-theme='b'>
+        <a href="#zaehler_uebersicht"><i class='icon-time'></i></a>
+        <h1>Zählerkategorie anlegen</h1>
+    </div>
+    <!-- Content -->
+    <div id="zaehlerkategorie_anlegen_content" data-role="content">
+        <form>
+            <ul data-role="listview" data-inset="true">
+                <li data-role="fieldcontain">
+                    <label for="zaehlerkategorie_anlegen_name" class="select">Name</label>
+                    <input type="text" id="zaehlerkategorie_anlegen_name" name="zaehlerkategorie_anlegen_name" value="" data-clear-btn="false">
+                </li>
+                <li data-role="fieldcontain">
+                    <label for="zaehlerkategorie_anlegen_beschreibung" class="select">Beschreibung</label>
+                    <input type="text" id="zaehlerkategorie_anlegen_beschreibung" name="zaehlerkategorie_anlegen_beschreibung" value="" data-clear-btn="false">
+                </li>
+            </ul>
+        </form>
+    </div>
+    <!-- Footer -->
+    <div id="zaehlerkategorie_anlegen_footer" data-position="fixed" data-role="footer" data-theme='b'>
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#zaehlerkategorie_uebersicht" data-icon="chevron-left" data-transition="flip" data-direction="reverse">Zurück</a></li>
+                <li><a id="zaehlerkategorie_anlegen_speichern" href="#zaehlerkategorie_uebersicht" data-icon="ok" data-transition="flip" data-direction="reverse">Speichern</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+<script type="text/javascript" src="js/date.js"></script>
+<script type="text/javascript" src="js/numeral.min.js"></script>
+<script type="text/javascript" src="js/numeral-de.min.js"></script>
+<script type="text/javascript">
+    app.initialize();
+</script>
+</body>
+</html>
