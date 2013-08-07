@@ -175,9 +175,10 @@ var db = {
                 tx.executeSql('INSERT INTO ZAEHLER_ART (NAME, EINHEIT, GRAFIK) VALUES ("Strom", "kWh", "bolt")');
                 tx.executeSql('INSERT INTO ZAEHLER_ART (NAME, EINHEIT, GRAFIK) VALUES ("Wasser", "m³", "umbrella")');
                 tx.executeSql('INSERT INTO ZAEHLER_ART (NAME, EINHEIT, GRAFIK) VALUES ("Gas", "m³", "fire")');
-                tx.executeSql('INSERT INTO ZAEHLER_ART (NAME, EINHEIT, GRAFIK) VALUES ("Öl", "Liter", "truck")');
+                tx.executeSql('INSERT INTO ZAEHLER_ART (NAME, EINHEIT, GRAFIK) VALUES ("Heizöl", "Liter", "truck")');
                 tx.executeSql('INSERT INTO ZAEHLER_ART (NAME, EINHEIT, GRAFIK) VALUES ("Nahwärme", "MWh", "sun")');
                 tx.executeSql('INSERT INTO ZAEHLER_ART (NAME, EINHEIT, GRAFIK) VALUES ("Solarstrom", "kWh", "bolt")');
+                tx.executeSql('INSERT INTO ZAEHLER_ART (NAME, EINHEIT, GRAFIK) VALUES ("Pellets", "t", "leaf")');
 
                 // ZAEHLER_KATEGORIE
                 tx.executeSql('INSERT INTO ZAEHLER_KATEGORIE (NAME, BESCHREIBUNG) VALUES ("Allgemein", "Standardkategorie")');
