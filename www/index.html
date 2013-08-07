@@ -312,6 +312,40 @@
     </div>
 </div>
 
+<!-- PAGE ZAEHLERKATEGORIE_BEARBEITEN -->
+<div id="zaehlerkategorie_bearbeiten" data-role="page" data-theme='b'>
+    <!-- Header -->
+    <div id="zaehlerkategorie_bearbeiten_header" data-role="header" data-position="fixed" data-theme='b'>
+        <a href="#zaehler_uebersicht"><i class='icon-time'></i></a>
+        <h1>Zählerkategorie bearbeiten</h1>
+    </div>
+    <!-- Content -->
+    <div id="zaehlerkategorie_bearbeiten_content" data-role="content">
+        <form>
+            <ul data-role="listview" data-inset="true">
+                <li data-role="fieldcontain">
+                    <label for="zaehlerkategorie_bearbeiten_name">Name</label>
+                    <input type="text" id="zaehlerkategorie_bearbeiten_name" name="zaehlerkategorie_bearbeiten_name" value="" data-clear-btn="false">
+                </li>
+                <li data-role="fieldcontain">
+                    <label for="zaehlerkategorie_bearbeiten_beschreibung">Beschreibung</label>
+                    <input type="text" id="zaehlerkategorie_bearbeiten_beschreibung" name="zaehlerkategorie_bearbeiten_beschreibung" value="" data-clear-btn="false">
+                </li>
+            </ul>
+        </form>
+    </div>
+    <!-- Footer -->
+    <div id="zaehlerkategorie_bearbeiten_footer" data-position="fixed" data-role="footer" data-theme='b'>
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#zaehlerkategorie_uebersicht" data-icon="chevron-left" data-transition="flip" data-direction="reverse">Zurück</a></li>
+                <li><a id="zaehlerkategorie_bearbeiten_loeschen" href="#zaehlerkategorie_uebersicht" data-icon="remove" data-transition="flip" data-direction="reverse">Löschen</a></li>
+                <li><a id="zaehlerkategorie_bearbeiten_speichern" href="#zaehlerkategorie_uebersicht" data-icon="ok" data-transition="flip" data-direction="reverse">Ändern</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript" src="cordova.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
 <script type="text/javascript" src="js/date.js"></script>

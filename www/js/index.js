@@ -127,6 +127,20 @@ var app = {
             });
         });
 
+        // ZAEHLERKATEGORIE_BEARBEITEN *****************************************
+
+        $('#zaehlerkategorie_bearbeiten').on('pageinit', function(event) {
+            $('#zaehlerkategorie_bearbeiten_speichern').on('click',function(event) {
+                db.update_zaehlerkategorie();
+            });
+            $('#zaehlerkategorie_bearbeiten_loeschen').on('click',function(event) {
+                db.delete_zaehlerkategorie();
+            });
+        });
+        
+        $('#zaehlerkategorie_bearbeiten').on('pagebeforeshow',function(event, ui) {
+            db.retriev_zaehlerkategorie();
+        });
     },
     
     // deviceready Event Handler
@@ -625,6 +639,74 @@ var db = {
             function() {
                 $('#zaehlerkategorie_anlegen_name').val('');
                 $('#zaehlerkategorie_anlegen_beschreibung').val('');
+            }
+        );
+    },
+    
+    delete_zaehlerkategorie: function() {
+        this.open().transaction(
+            // callback
+            function(tx) {
+                var zaehlerKategorieId = window.localStorage.getItem(constants.zaehlerKategorieId);
+                tx.executeSql("DELETE FROM ZAEHLER_KATEGORIE WHERE ID = ?", [zaehlerKategorieId]);
+                
+                //TODO Check ob bereits ein zugeordneter Datensatz exikstiert
+            },
+
+            function(error) {
+                console.error("Error processing SQL: " + error.message);
+            },
+
+            function() {
+                console.info("Success processing SQL!");
+            }
+        );
+    },
+    
+    update_zaehlerkategorie: function() {
+        this.open().transaction(
+            // callback
+            function(tx) {
+
+                var zaehlerKategorieId = window.localStorage.getItem(constants.zaehlerKategorieId);
+                var name = $('#zaehlerkategorie_bearbeiten_name').val();
+                var beschreibung = $('#zaehlerkategorie_bearbeiten_beschreibung').val();
+
+                tx.executeSql("UPDATE ZAEHLER_KATEGORIE SET NAME = ?, BESCHREIBUNG = ? WHERE ID = ?", [name, beschreibung, zaehlerKategorieId]);
+            },
+
+            function(error) {
+                console.error("Error processing SQL: " + error.message);
+            },
+
+            function() {
+                console.info("Success processing SQL!");
+            }
+        );
+    },
+    
+    retriev_zaehlerkategorie: function() {
+        this.open().transaction(
+            // callback
+            function(tx) {
+
+                var sql ='\
+                    SELECT \
+                        NAME, \
+                        BESCHREIBUNG \
+                    FROM \
+                        ZAEHLER_KATEGORIE \
+                    WHERE  \
+                        ID = ?';
+
+                var zaehlerKategorieId = window.localStorage.getItem(constants.zaehlerKategorieId);
+
+                tx.executeSql(sql,[zaehlerKategorieId], function (tx, results) {
+                    var item = results.rows.item(0);
+
+                    $('#zaehlerkategorie_bearbeiten_name').val(item.NAME);
+                    $('#zaehlerkategorie_bearbeiten_beschreibung').val(item.BESCHREIBUNG);
+                });
             }
         );
     }
