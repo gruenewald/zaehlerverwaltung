@@ -647,10 +647,34 @@ var db = {
         this.open().transaction(
             // callback
             function(tx) {
+                var sql ='\
+                    SELECT \
+                        COUNT(Z.ZAEHLER_KATEGORIE_ID) AS ANZAHL_ZUGEORDNETE_ZAEHLER, \
+                        ZK.NAME AS ZAEHLER_KATEGORIE_NAME \
+                    FROM \
+                        ZAEHLER_KATEGORIE ZK \
+                        LEFT JOIN ZAEHLER Z ON Z.ZAEHLER_KATEGORIE_ID = ZK.ID \
+                    WHERE \
+                        ZK.ID = ? \
+                    GROUP BY ZK.NAME';
+
                 var zaehlerKategorieId = window.localStorage.getItem(constants.zaehlerKategorieId);
-                tx.executeSql("DELETE FROM ZAEHLER_KATEGORIE WHERE ID = ?", [zaehlerKategorieId]);
-                
-                //TODO Check ob bereits ein zugeordneter Datensatz exikstiert
+
+                tx.executeSql(sql,[zaehlerKategorieId], function (tx, results) {
+                    var item = results.rows.item(0);
+                    var anzahlZugeordneteZaehler = item.ANZAHL_ZUGEORDNETE_ZAEHLER;
+                    if (anzahlZugeordneteZaehler > 0) {
+                        navigator.notification.alert(
+                            'Die Kategorie "' + item.ZAEHLER_KATEGORIE_NAME + '" kann nicht gelöscht werden! Es sind aktuell noch ' + anzahlZugeordneteZaehler + ' Zähler zugeordnet.', // message
+                            function() {}, // callback
+                            'Hinweis', // title
+                            'Schließen' // buttonName
+                        );
+                    } else {
+                       tx.executeSql("DELETE FROM ZAEHLER_KATEGORIE WHERE ID = ?", [zaehlerKategorieId]);
+                       $.mobile.changePage('#zaehlerkategorie_uebersicht', { transition: "flip", reverse: true, changeHash: false });
+                    }
+                });
             },
 
             function(error) {
