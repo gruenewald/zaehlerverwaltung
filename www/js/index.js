@@ -66,7 +66,9 @@ var app = {
         });
 
         $('#zaehler_anlegen').on('pagebeforeshow',function(event, ui) {
-            db.retriev_zaehlerart($('#zaehler_anlegen_content select'));
+            db.retriev_zaehlerart(
+                $('#zaehler_anlegen_content_art'),
+                $('#zaehler_anlegen_content_kategorie'));
         });
 
         // ZAEHLER_VERWALTEN ***************************************************
@@ -81,7 +83,9 @@ var app = {
         });
 
         $('#zaehler_verwalten').on('pagebeforeshow',function(event, ui) {
-            db.retriev_zaehlerart($('#zaehler_verwalten_content select'));
+            db.retriev_zaehlerart(
+                $('#zaehler_verwalten_content_art'),
+                $('#zaehler_verwalten_content_kategorie'));
             db.retriev_zaehler();
         });
 
@@ -232,6 +236,7 @@ var db = {
                         ZA.EINHEIT AS ZAEHLER_ART_EINHEIT, \
                         ZA.GRAFIK AS ZAEHLER_ART_GRAFIK, \
                         ZK.NAME AS ZAEHLER_KATEGORIE_NAME, \
+                        (SELECT COUNT(*) FROM ZAEHLER Z_TEMP WHERE Z_TEMP.ZAEHLER_KATEGORIE_ID = ZK.ID) AS ZAEHLER_KATEGORIE_ANZAHL, \
                         MAX(ZS.STAND) AS ZAEHLER_STAND_STAND, \
                         MAX(ZS.ABLESUNG) AS ZAEHLER_STAND_ABLESUNG \
                     FROM \
@@ -239,7 +244,8 @@ var db = {
                         INNER JOIN ZAEHLER_ART ZA ON Z.ZAEHLER_ART_ID = ZA.ID \
                         INNER JOIN ZAEHLER_KATEGORIE ZK ON Z.ZAEHLER_KATEGORIE_ID = ZK.ID \
                         LEFT JOIN ZAEHLER_STAND ZS ON Z.ID = ZS.ZAEHLER_ID \
-                    GROUP BY ZAEHLER_ID';
+                    GROUP BY ZAEHLER_ID \
+                    ORDER BY ZAEHLER_KATEGORIE_NAME';
 
                 tx.executeSql(sql, [], function (tx, results) {
                     $("#zaehler_uebersicht_listview li").remove();
@@ -247,11 +253,13 @@ var db = {
                     var listview = $("#zaehler_uebersicht_listview");
 
                     if (len) {
+                        var letzteZahlerKategorie = '';
                         for (var i = 0; i < len; i++){
                             var item = results.rows.item(i);
-
-                            if (i == 0) {
-                                listview.append('<li data-role="list-divider">Zähler<span class="ui-li-count" style="font-size: 14px;">' + len + '</span></li>');
+                            
+                            if (letzteZahlerKategorie !== item.ZAEHLER_KATEGORIE_NAME) {
+                                letzteZahlerKategorie = item.ZAEHLER_KATEGORIE_NAME;
+                                listview.append('<li data-role="list-divider">' + letzteZahlerKategorie + '<span class="ui-li-count" style="font-size: 14px;">' + item.ZAEHLER_KATEGORIE_ANZAHL + '</span></li>');
                             }
 
                             var letzterZahlerStand = '';
@@ -354,7 +362,7 @@ var db = {
         );
     },
 
-    retriev_zaehlerart: function(selectElement) {
+    retriev_zaehlerart: function(selectElement, selectZaehlerKategorieElement) {
         this.open().transaction(
             // callback
             function(tx) {
@@ -380,6 +388,20 @@ var db = {
                         }
                     }
                 });
+                
+                tx.executeSql('SELECT ID, NAME FROM ZAEHLER_KATEGORIE ORDER BY NAME',[], function (tx, results) {
+                    var len = results.rows.length;
+                    if (len) {
+                        selectZaehlerKategorieElement.find('option').remove();
+                        for (var i = 0; i < len; i++) {
+                            var item = results.rows.item(i);
+                            if (i == 0) {
+                                selectZaehlerKategorieElement.append('<option value="null">Bitte Zählerkategorie ausw&auml;hlen</option>');
+                            }
+                            selectZaehlerKategorieElement.append('<option value="' + item.ID + '">' + item.NAME + '</option>');
+                        }
+                    }
+                });
             },
 
             function(error) {
@@ -389,6 +411,7 @@ var db = {
             function() {
                 console.info("Success processing SQL!");
                 selectElement.selectmenu('refresh');
+                selectZaehlerKategorieElement.selectmenu('refresh');
             }
         );
     },
@@ -401,6 +424,7 @@ var db = {
                 var sql ='\
                     SELECT \
                         ZAEHLER_ART_ID, \
+                        ZAEHLER_KATEGORIE_ID, \
                         NAME \
                     FROM \
                         ZAEHLER \
@@ -411,8 +435,8 @@ var db = {
 
                 tx.executeSql(sql,[zaehlerId], function (tx, results) {
                     var item = results.rows.item(0);
-                    $('#zaehler_verwalten_content_art').val(item.ZAEHLER_ART_ID);
-                    $('#zaehler_verwalten_content_art').selectmenu('refresh');
+                    $('#zaehler_verwalten_content_art').val(item.ZAEHLER_ART_ID).selectmenu('refresh');
+                    $('#zaehler_verwalten_content_kategorie').val(item.ZAEHLER_KATEGORIE_ID).selectmenu('refresh');
                     $('#zaehler_verwalten_content_name').val(item.NAME);
                 });
             },
@@ -433,9 +457,10 @@ var db = {
             function(tx) {
 
                 var art = $('#zaehler_anlegen_content_art').val();
+                var kategorie = $('#zaehler_anlegen_content_kategorie').val();
                 var name = $('#zaehler_anlegen_content_name').val();
 
-                tx.executeSql("INSERT INTO ZAEHLER (ZAEHLER_ART_ID, ZAEHLER_KATEGORIE_ID, NAME) VALUES (?, 1, ?)", [art, name]);
+                tx.executeSql("INSERT INTO ZAEHLER (ZAEHLER_ART_ID, ZAEHLER_KATEGORIE_ID, NAME) VALUES (?, ?, ?)", [art, kategorie, name]);
             },
 
             function(error) {
@@ -443,8 +468,7 @@ var db = {
             },
 
             function() {
-                $('#zaehler_anlegen_content_art').val('');
-                $('#zaehler_anlegen_content_name').val('');
+                console.info("Success processing SQL!");
             }
         );
     },
@@ -456,9 +480,10 @@ var db = {
 
                 var zaehlerId = window.localStorage.getItem(constants.zaehlerId);
                 var artId = $('#zaehler_verwalten_content_art').val();
+                var kategorieId = $('#zaehler_verwalten_content_kategorie').val();
                 var name = $('#zaehler_verwalten_content_name').val();
 
-                tx.executeSql("UPDATE ZAEHLER SET ZAEHLER_ART_ID = ?, NAME = ? WHERE ID = ?", [artId, name, zaehlerId]);
+                tx.executeSql("UPDATE ZAEHLER SET ZAEHLER_ART_ID = ?, ZAEHLER_KATEGORIE_ID = ?, NAME = ? WHERE ID = ?", [artId, kategorieId, name, zaehlerId]);
             }
         );
     },
