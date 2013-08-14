@@ -28,7 +28,6 @@ var app = {
     initialize: function() {
         numeral.language('de');
         this.bindEvents();
-        db.init();
     },
     // Bind Event Listeners
     //
@@ -157,7 +156,29 @@ var app = {
             
     // Update DOM on a Received Event
     receivedEvent: function(id) {
-        db.init();
+        console.info('receivedEvent deviceready');
+        
+        var database = new Database();
+
+        function onInitializationSucess() {
+            console.info('Datenbank Initialisierung abgeschlossen!');
+            
+            $.getJSON('data-test.json', function(data) {
+                database.importData(data);
+            });
+        }
+
+        function onRetrieveVersionSucess(version) {
+            console.info('Datenbank-Version: ' + version);
+        }
+
+        function onRetrieveVersionError() {
+            console.info('Datenbank-Version konnte nicht ermittelt werden!');
+            // Datenbank wird initialisiert
+            database.initialization(onInitializationSucess);
+        }
+
+        database.retrieveVersion(onRetrieveVersionSucess, onRetrieveVersionError);
     }
 };
 
@@ -165,62 +186,6 @@ var db = {
     // Datenbank öffnen
     open: function() {
         return window.openDatabase("VERBRAUCHERZAEHLER", "1.0", "Verbraucherzähler", 1000000);
-    },
-
-    // Datenbank Initialisierung
-    init: function() {
-        var db = this.open();
-
-        console.log(db.version);
-
-        //db.changeVersion(db.version, "2", function () {console.log("foobar")});
-
-        db.transaction(
-            // callback
-            function(tx) {
-
-                tx.executeSql('DROP TABLE IF EXISTS ZAEHLER_ART');
-                tx.executeSql('DROP TABLE IF EXISTS ZAEHLER_KATEGORIE');
-                tx.executeSql('DROP TABLE IF EXISTS ZAEHLER');
-                tx.executeSql('DROP TABLE IF EXISTS ZAEHLER_STAND');
-
-                tx.executeSql('CREATE TABLE IF NOT EXISTS ZAEHLER_ART (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT, EINHEIT TEXT, GRAFIK TEXT)');
-                tx.executeSql('CREATE TABLE IF NOT EXISTS ZAEHLER_KATEGORIE (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT, BESCHREIBUNG TEXT)');
-                tx.executeSql('CREATE TABLE IF NOT EXISTS ZAEHLER (ID INTEGER PRIMARY KEY AUTOINCREMENT, ZAEHLER_ART_ID INTEGER, ZAEHLER_KATEGORIE_ID INTEGER, NAME TEXT)');
-                tx.executeSql('CREATE TABLE IF NOT EXISTS ZAEHLER_STAND (ID INTEGER PRIMARY KEY AUTOINCREMENT, ZAEHLER_ID INTEGER, ABLESUNG NUMERIC, STAND NUMERIC, NOTIZ TEXT)');
-
-                // ZAEHLER_ART
-                tx.executeSql('INSERT INTO ZAEHLER_ART (NAME, EINHEIT, GRAFIK) VALUES ("Strom", "kWh", "bolt")');
-                tx.executeSql('INSERT INTO ZAEHLER_ART (NAME, EINHEIT, GRAFIK) VALUES ("Wasser", "m³", "umbrella")');
-                tx.executeSql('INSERT INTO ZAEHLER_ART (NAME, EINHEIT, GRAFIK) VALUES ("Gas", "m³", "fire")');
-                tx.executeSql('INSERT INTO ZAEHLER_ART (NAME, EINHEIT, GRAFIK) VALUES ("Heizöl", "Liter", "truck")');
-                tx.executeSql('INSERT INTO ZAEHLER_ART (NAME, EINHEIT, GRAFIK) VALUES ("Nahwärme", "MWh", "sun")');
-                tx.executeSql('INSERT INTO ZAEHLER_ART (NAME, EINHEIT, GRAFIK) VALUES ("Solarstrom", "kWh", "bolt")');
-                tx.executeSql('INSERT INTO ZAEHLER_ART (NAME, EINHEIT, GRAFIK) VALUES ("Pellets", "t", "leaf")');
-
-                // ZAEHLER_KATEGORIE
-                tx.executeSql('INSERT INTO ZAEHLER_KATEGORIE (NAME, BESCHREIBUNG) VALUES ("Allgemein", "Standardkategorie")');
-
-                // ZAEHLER
-                tx.executeSql('INSERT INTO ZAEHLER (ZAEHLER_ART_ID, ZAEHLER_KATEGORIE_ID, NAME) VALUES (1, 1, "64781254")');
-                tx.executeSql('INSERT INTO ZAEHLER (ZAEHLER_ART_ID, ZAEHLER_KATEGORIE_ID, NAME) VALUES (3, 1, "7885121456")');
-
-                // ZAHLER_STAND
-                tx.executeSql('INSERT INTO ZAEHLER_STAND (ZAEHLER_ID, ABLESUNG, STAND, NOTIZ) VALUES (1, datetime("2013-01-01T08:30:00"), 1245.46, "")');
-                tx.executeSql('INSERT INTO ZAEHLER_STAND (ZAEHLER_ID, ABLESUNG, STAND, NOTIZ) VALUES (1, datetime("2013-02-04T10:00:00"), 1345.46, "Das ist eine Notiz2")');
-                tx.executeSql('INSERT INTO ZAEHLER_STAND (ZAEHLER_ID, ABLESUNG, STAND, NOTIZ) VALUES (1, datetime("2013-02-28T23:00:50"), 1545.46, "")');
-                tx.executeSql('INSERT INTO ZAEHLER_STAND (ZAEHLER_ID, ABLESUNG, STAND, NOTIZ) VALUES (1, datetime("2013-04-02T13:02:11"), 1645.46, "")');
-                tx.executeSql('INSERT INTO ZAEHLER_STAND (ZAEHLER_ID, ABLESUNG, STAND, NOTIZ) VALUES (2, datetime("2013-05-12T13:02:11"), 334587.46, "Das ist nix.")');
-            },
-
-            function(error) {
-                console.error("Error processing SQL: " + error.message);
-            },
-
-            function() {
-                console.info("Success processing SQL!");
-            }
-        );
     },
 
     retriev_zaehler_uebersicht: function() {
