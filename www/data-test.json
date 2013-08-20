@@ -17,6 +17,30 @@
          "name":"Wasser",
          "einheit":"m³",
          "grafik":"umbrella"
+      },
+      {
+         "id":4,
+         "name":"Gas",
+         "einheit":"m³",
+         "grafik":"fire"
+      },
+      {
+         "id":5,
+         "name":"Heizöl",
+         "einheit":"Liter",
+         "grafik":"truck"
+      },
+      {
+         "id":6,
+         "name":"Solarstrom",
+         "einheit":"kWh",
+         "grafik":"bolt"
+      },
+      {
+         "id":7,
+         "name":"Pellets",
+         "einheit":"t",
+         "grafik":"leaf"
       }
    ],
    "zaehlerKategorie":[
