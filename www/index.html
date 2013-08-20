@@ -88,15 +88,13 @@
     </div>
     <!-- Content -->
     <div id="zaehlerstand_uebersicht_content" data-role="content">
-        <ul id="zaehlerstand_uebersicht_listview" data-role="listview" data-inset="true" data-divider-theme="b" data-icon="gear">
-        </ul>
     </div>
     <!-- Footer -->
     <div id="zaehlerstand_uebersicht_footer" data-position="fixed" data-role="footer" data-theme='b'>
         <div data-role="navbar">
             <ul>
                 <li><a href="#zaehler_uebersicht" data-icon="chevron-left" data-transition="slide" data-direction="reverse">Zurück</a></li>
-                <li><a href="#zaehlerstand_uebersicht" data-icon="signal" data-transition="flip">Auswertung</a></li>
+                <li><a href="#zaehlerstand_auswerten" data-icon="signal" data-transition="flip">Auswertung</a></li>
                 <li><a href="#zaehlerstand_erfassen" data-icon="plus" data-transition="flip">Erfassen</a></li>
             </ul>
         </div>
@@ -356,12 +354,18 @@
     </div>
 </div>
 
+<!-- PAGE ZAEHLERSTAND_AUSWERTEN -->
+<div id="zaehlerstand_auswerten" data-role="page" data-theme='b'>
+
+</div>
+
 <script type="text/javascript" src="cordova.js"></script>
 <script type="text/javascript" src="js/database.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
 <script type="text/javascript" src="js/date.js"></script>
 <script type="text/javascript" src="js/numeral.min.js"></script>
 <script type="text/javascript" src="js/numeral-de.min.js"></script>
+<script type="text/javascript" src="js/chart.min.js"></script>
 <script type="text/javascript">
     app.initialize();
 </script>

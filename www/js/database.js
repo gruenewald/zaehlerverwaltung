@@ -29,12 +29,12 @@ function Database() {
     this.retrieveVersion = function(onRetrieveVersionSucess, onRetrieveVersionError) {
         that.db.transaction(
             function(tx) {
-                tx.executeSql("SELECT MAX(VERSION) FROM DATABASECHANGELOG", [],
+                tx.executeSql("SELECT MAX(VERSION) AS VERSION FROM DATABASECHANGELOG", [],
                     // success callback
                     function (tx, results) {
-                        if(results.rowsAffected) {
-                            var version = results.rows.item(0);
-                            onVersionRetrieveSucess.call(this, version);
+                        if(results.rows.length === 1) {
+                            var version = results.rows.item(0).VERSION;
+                            onRetrieveVersionSucess.call(this, version);
                         } else {
                             onRetrieveVersionError.call(this);
                         }
@@ -59,11 +59,17 @@ function Database() {
                 tx.executeSql('DROP TABLE IF EXISTS ZAEHLER_KATEGORIE');
                 tx.executeSql('DROP TABLE IF EXISTS ZAEHLER');
                 tx.executeSql('DROP TABLE IF EXISTS ZAEHLER_STAND');
-                tx.executeSql('CREATE TABLE IF NOT EXISTS DATABASECHANGELOG (ID INTEGER PRIMARY KEY AUTOINCREMENT, VERSION NUMERIC, ERSTELLT_AM NUMERIC, NAME TEXT, BESCHREIBUNG TEXT)');
+                tx.executeSql('CREATE TABLE IF NOT EXISTS DATABASECHANGELOG (ID INTEGER PRIMARY KEY AUTOINCREMENT, VERSION NUMERIC, ERSTELLT_AM NUMERIC, BESCHREIBUNG TEXT)');
                 tx.executeSql('CREATE TABLE IF NOT EXISTS ZAEHLER_ART (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT, EINHEIT TEXT, GRAFIK TEXT)');
                 tx.executeSql('CREATE TABLE IF NOT EXISTS ZAEHLER_KATEGORIE (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT, BESCHREIBUNG TEXT)');
                 tx.executeSql('CREATE TABLE IF NOT EXISTS ZAEHLER (ID INTEGER PRIMARY KEY AUTOINCREMENT, ZAEHLER_ART_ID INTEGER, ZAEHLER_KATEGORIE_ID INTEGER, NAME TEXT)');
                 tx.executeSql('CREATE TABLE IF NOT EXISTS ZAEHLER_STAND (ID INTEGER PRIMARY KEY AUTOINCREMENT, ZAEHLER_ID INTEGER, ABLESUNG NUMERIC, STAND NUMERIC, NOTIZ TEXT)');
+                
+                var version = 1.0;                
+                var currentDate = new Date();                
+                var currentDateString = currentDate.toString('yyyy-MM-dd') + 'T' + currentDate.toString('HH:mm:ss');
+                var beschreibung = 'Erstellung der initialen Datenstruktur.';
+                tx.executeSql('INSERT INTO DATABASECHANGELOG (VERSION, ERSTELLT_AM, BESCHREIBUNG) VALUES (?, ?, ?)', [version, currentDateString, beschreibung], onExecSqlSuccess, onExecSqlError);
             },
             onTxError,
             function() {

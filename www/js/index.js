@@ -23,6 +23,25 @@ var constants = {
     'zaehlerKategorieId': 'ZAEHLER_KATEGORIE_ID'
 };
 
+var sql = {
+    'zaehlerstandUebersicht': '\
+        SELECT \
+            Z.ID AS ZAEHLER_ID,  \
+            ZS.ID AS ZAEHLER_STAND_ID, \
+            ZS.STAND AS ZAEHLER_STAND_STAND, \
+            ZS.ABLESUNG AS ZAEHLER_STAND_ABLESUNG, \
+            ZS.NOTIZ AS ZAEHLER_STAND_NOTIZ, \
+            ZA.NAME AS ZAEHLER_ART_NAME, \
+            ZA.EINHEIT AS ZAEHLER_ART_EINHEIT \
+        FROM \
+            ZAEHLER Z \
+            INNER JOIN ZAEHLER_ART ZA ON Z.ZAEHLER_ART_ID = ZA.ID \
+            LEFT JOIN ZAEHLER_STAND ZS ON Z.ID = ZS.ZAEHLER_ID \
+        WHERE \
+            ZAEHLER_ID = ? \
+        ORDER BY ZAEHLER_STAND_ID DESC' 
+};
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -52,8 +71,21 @@ var app = {
 
         });
 
-        $('#zaehlerstand_uebersicht').on('pagebeforeshow',function(event, ui) {
-            db.retriev_zaehlerstand_uebersicht();
+        $('#zaehlerstand_uebersicht').on('pageshow',function(event, ui) {
+            var links = $('#zaehlerstand_uebersicht_content').find('a');
+            links.off();
+            links.on("vclick", function(){
+                var zaehlerStandId = $(this).data("identity");
+                window.localStorage.setItem(constants.zaehlerStandId, zaehlerStandId);
+            });
+        });
+        
+        $('#zaehlerstand_uebersicht').on('pagebeforehide',function(event, ui) {
+            console.info('zaehlerstand_uebersicht wird verlassen');
+        });
+        
+        $('#zaehlerstand_uebersicht').on('pagehide',function(event, ui) {
+            console.info('zaehlerstand_uebersicht ist verlassen');
         });
 
         // ZAEHLER_ANLEGEN *****************************************************
@@ -114,6 +146,16 @@ var app = {
 
         $('#zaehlerstand_bearbeiten').on('pagebeforeshow',function(event, ui) {
             db.retriev_zaehlerstand();
+        });
+        
+        // ZAEHLERSTAND_AUSWERTEN **********************************************
+
+        $('#zaehlerstand_auswerten').on('pageinit', function(event) {
+            console.info('zaehlerstand_auswerten init');
+        });
+        
+        $('#zaehlerstand_auswerten').on('pageshow', function(event, ui) {
+
         });
 
         // ZAEHLERKATEGORIE_UEBERSICHT *****************************************
@@ -237,7 +279,7 @@ var db = {
                             }
 
                             listview.append('\
-                                <li><a href="#zaehlerstand_uebersicht" data-transition="slide" data-identity="' + item.ZAEHLER_ID + '" style="padding-right: 15px;">\
+                                <li><a href="#" data-transition="slide" data-identity="' + item.ZAEHLER_ID + '" style="padding-right: 15px;">\
                                     <h2 style="color: #33B5E5;"><strong>' + item.ZAEHLER_ART_NAME + '</strong><i class="icon-' + item.ZAEHLER_ART_GRAFIK + '" style="display: inline-block; padding-left: 10px;"></i></h2>\
                                     <p><span style="font-style: italic">Nr. ' + item.ZAEHLER_NAME + '</span></p>\
                                     <p>' + letzterZahlerStand + '</p>\
@@ -255,59 +297,60 @@ var db = {
             function() {
                 $("#zaehler_uebersicht_listview").listview('refresh');
                 $('#zaehler_uebersicht_listview a').off();
-                $('#zaehler_uebersicht_listview a').on("click", function(event){
+                $('#zaehler_uebersicht_listview a').on("vclick", function(event){
                     var zaehlerId = $(this).data("identity");
                     window.localStorage.setItem(constants.zaehlerId, zaehlerId);
+                    db.retriev_zaehlerstand_uebersicht();
                 });
             }
         );
     },
 
     retriev_zaehlerstand_uebersicht: function() {
+        
+        var textToInsert = [];
+        var i = 0;
+        
         this.open().transaction(
             // callback
             function(tx) {
 
                 var zaehlerId = window.localStorage.getItem(constants.zaehlerId);
-                var sql ='\
-                    SELECT \
-                        Z.ID AS ZAEHLER_ID,  \
-                        ZS.ID AS ZAEHLER_STAND_ID, \
-                        ZS.STAND AS ZAEHLER_STAND_STAND, \
-                        ZS.ABLESUNG AS ZAEHLER_STAND_ABLESUNG, \
-                        ZS.NOTIZ AS ZAEHLER_STAND_NOTIZ, \
-                        ZA.NAME AS ZAEHLER_ART_NAME, \
-                        ZA.EINHEIT AS ZAEHLER_ART_EINHEIT \
-                    FROM \
-                        ZAEHLER Z \
-                        INNER JOIN ZAEHLER_ART ZA ON Z.ZAEHLER_ART_ID = ZA.ID \
-                        LEFT JOIN ZAEHLER_STAND ZS ON Z.ID = ZS.ZAEHLER_ID \
-                    WHERE \
-                        ZAEHLER_ID = ? \
-                    ORDER BY ZAEHLER_STAND_ID DESC';
 
-                tx.executeSql(sql,[zaehlerId], function (tx, results) {
-                    $("#zaehlerstand_uebersicht_listview li").remove();
-                    var listview = $("#zaehlerstand_uebersicht_listview");
+                tx.executeSql(sql.zaehlerstandUebersicht,[zaehlerId], function (tx, results) {
+                    
                     var len = results.rows.length;
-                    if (len) {
-                        for (var i = 0; i < len; i++){
-                            var item = results.rows.item(i);
-                            var ablesungTimestamp = item.ZAEHLER_STAND_ABLESUNG;
-                            var ablesung = Date.parse(ablesungTimestamp).toString('dd.MM.yyyy HH:mm');
 
-                            if (i == 0) {
-                                listview.append('<li data-role="list-divider">' + item.ZAEHLER_ART_NAME + '<span class="ui-li-count" style="font-size: 14px;">' + len + '</span></li>');
+                    if (len) {
+                        textToInsert[i++] = '<ul id="zaehlerstand_uebersicht_listview" data-role="listview" data-inset="true" data-divider-theme="b" data-icon="gear">';
+
+                        for (var a = 0; a < len; a++){
+                            var item = results.rows.item(a);
+
+                            if (a === 0) {
+                                textToInsert[i++] = '<li data-role="list-divider">';
+                                textToInsert[i++] = item.ZAEHLER_ART_NAME;
+                                textToInsert[i++] = '<span class="ui-li-count" style="font-size: 14px;">';
+                                textToInsert[i++] = len;
+                                textToInsert[i++] = '</span></li>';
                             }
 
-                            listview.append('\
-                                <li><a href="#zaehlerstand_bearbeiten" data-transition="flip" data-identity="' + item.ZAEHLER_STAND_ID + '" style="padding-right: 15px;">\
-                                    <h2><strong>' + ablesung + ' Uhr</strong></h2>\
-                                    <p><span style="font-style: italic">' + item.ZAEHLER_STAND_NOTIZ + '</span></p>\
-                                    <p>' + numeral(item.ZAEHLER_STAND_STAND).format('0,0.00') + ' ' + item.ZAEHLER_ART_EINHEIT + '</p>\
-                                    <p class="ui-li-aside"></p>\
-                                </a></li>');
+                            textToInsert[i++] = '<li><a href="#zaehlerstand_bearbeiten" data-transition="flip" data-identity="';
+                            textToInsert[i++] = item.ZAEHLER_STAND_ID;
+                            textToInsert[i++] = '" style="padding-right: 15px;">';
+                            textToInsert[i++] = '<h2><strong>';
+                            textToInsert[i++] = Date.parse(item.ZAEHLER_STAND_ABLESUNG).toString('dd.MM.yyyy HH:mm');
+                            textToInsert[i++] = ' Uhr</strong></h2>';
+                            textToInsert[i++] = '<p><span style="font-style: italic">';
+                            textToInsert[i++] = item.ZAEHLER_STAND_NOTIZ;
+                            textToInsert[i++] = '</span></p><p>';
+                            textToInsert[i++] = numeral(item.ZAEHLER_STAND_STAND).format('0,0.00');
+                            textToInsert[i++] = ' ';
+                            textToInsert[i++] = item.ZAEHLER_ART_EINHEIT;
+                            textToInsert[i++] = '</p><p class="ui-li-aside"></p></a></li>';
                         }
+                        
+                        textToInsert[i++] = '</ul>';
                     }
                 });
             },
@@ -317,12 +360,12 @@ var db = {
             },
 
             function() {
-                $("#zaehlerstand_uebersicht_listview").listview('refresh');
-                $('#zaehlerstand_uebersicht_listview a').off();
-                $('#zaehlerstand_uebersicht_listview a').on("click", function(event){
-                    var zaehlerStandId = $(this).data("identity");
-                    window.localStorage.setItem(constants.zaehlerStandId, zaehlerStandId);
-                });
+                var $page = $('#zaehlerstand_uebersicht');
+                var $content = $page.children(':jqmData(role=content)');
+                $content.html(textToInsert.join(''));                
+                $page.page();
+                $content.children(':jqmData(role=listview)').listview();
+                $.mobile.changePage( $page, { transition: "slide" } );
             }
         );
     },
