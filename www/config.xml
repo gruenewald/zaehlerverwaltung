@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="de.tmgonline.verbrauchszaehler" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Zählerverwaltung</name>
+    <name>Zaehlerverwaltung</name>
     <description>
         Zettel und Stift, das war einmal. Mit der Zählerverwaltung haben Sie die Möglichkeit alle Zählerstände Ihrer Energieverbraucher einfach, schnell und übersichtlich zu verwalten.
     </description>
