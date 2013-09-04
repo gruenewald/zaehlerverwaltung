@@ -7,6 +7,8 @@ function Database() {
     var dbDescription = "Verbraucherzaehler";
     var dbSize = 2 * 1024 * 1024; // 2MB
     
+    Database.TABLE_NAMES = ['ZAEHLER_STAND', 'ZAEHLER', 'ZAEHLER_KATEGORIE', 'ZAEHLER_ART', 'DATABASECHANGELOG'];
+    
     this.db = window.openDatabase(dbName, dbVersion, dbDescription, dbSize);
     
     function onTxError(error) {
@@ -32,9 +34,8 @@ function Database() {
                 tx.executeSql("SELECT MAX(VERSION) AS VERSION FROM DATABASECHANGELOG", [],
                     // success callback
                     function (tx, results) {
-                        if(results.rows.length === 1) {
-                            var version = results.rows.item(0).VERSION;
-                            onRetrieveVersionSucess.call(this, version);
+                        if(results.rows.length === 1 && results.rows.item(0).VERSION !== null) {
+                            onRetrieveVersionSucess.call(this, results.rows.item(0).VERSION);
                         } else {
                             onRetrieveVersionError.call(this);
                         }
@@ -51,7 +52,7 @@ function Database() {
     };
     
     // Datenbank initialisieren
-    this.initialization = function(onInitializationSucess) {
+    this.initialize = function(onInitializationSucess) {
         that.db.transaction(          
             function(tx) {
             	tx.executeSql('DROP TABLE IF EXISTS DATABASECHANGELOG');
@@ -79,7 +80,7 @@ function Database() {
     };
     
     // Daten importieren    
-    this.importData = function(data) {
+    this.importData = function(data, onImportDataSucess) {
         that.db.transaction(          
             function(tx) {
                 // zaehlerArt
@@ -96,11 +97,13 @@ function Database() {
                 });
                 // zaehlerStand
                 $(data.zaehlerStand).each(function() {
-                    tx.executeSql('INSERT INTO ZAEHLER_STAND (ZAEHLER_ID, ABLESUNG, STAND, NOTIZ) VALUES (?, ?, ?, ?)', [this.zaehlerId, this.ablesung, this.stand, this.notiz]);
+                    tx.executeSql('INSERT INTO ZAEHLER_STAND (ZAEHLER_ID, ABLESUNG, STAND, NOTIZ) VALUES (?, ?, ?, ?)', [this.zaehlerId, this.ablesung, this.stand, this.notiz], onExecSqlSuccess, onExecSqlError);
                 });
             },
             onTxError,
-            onTxSuccess
+            function() {
+                onImportDataSucess.call(this);
+            }
         );
     };
 }

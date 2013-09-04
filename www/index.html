@@ -57,25 +57,20 @@
             <li data-role="list-divider">Einstellungen</li>
             <li data-icon="folder-open"><a href="#zaehlerkategorie_uebersicht">Zählerkategorien</a></li>
             <li data-icon="gear"><a href="#">Zählerarten</a></li>
+            <li data-role="list-divider">Testdaten</li>
+            <li data-icon="gear"><a href="#" id="testdatenZuruecksetzen">Zurücksetzen</a></li>
         </ul>
     </div>
     <!-- Header -->
     <div id="zaehler_uebersicht_header" data-role="header" data-position="fixed" data-theme='b'>
         <a href="#zaehler_uebersicht_menu"><i class='icon-reorder'></i></a>
         <h1>Zählerübersicht</h1>
+        <a href="#zaehler_anlegen" data-transition="flip" data-icon="plus">&nbsp;</a>
     </div>
     <!-- Content -->
     <div id="zaehler_uebersicht_content" data-role="content">
         <ul id="zaehler_uebersicht_listview" data-role="listview" data-inset="false" data-split-icon="gear" data-split-theme="b">
         </ul>
-    </div>
-    <!-- Footer -->
-    <div id="zaehler_uebersicht_footer" data-position="fixed" data-role="footer" data-theme='b'>
-        <div data-role="navbar">
-            <ul>
-                <li><a href="#zaehler_anlegen" data-icon="plus" data-transition="flip">Anlegen</a></li>
-            </ul>
-        </div>
     </div>
 </div>
 
@@ -216,7 +211,7 @@
         <div data-role="navbar">
             <ul>
                 <li><a id="zaehlerstand_erfassen_abbrechen" href="#zaehlerstand_uebersicht" data-icon="chevron-left" data-transition="flip" data-direction="reverse">Zurück</a></li>
-                <li><a id="zaehlerstand_erfassen_speichern" href="#zaehlerstand_uebersicht" data-icon="ok" data-transition="flip" data-direction="reverse">Speichern</a></li>
+                <li><a id="zaehlerstand_erfassen_speichern" data-icon="ok" data-transition="flip" data-direction="reverse">Speichern</a></li>
             </ul>
         </div>
     </div>
@@ -257,8 +252,8 @@
         <div data-role="navbar">
             <ul>
                 <li><a id="zaehlerstand_bearbeiten_abbrechen" href="#zaehlerstand_uebersicht" data-icon="chevron-left" data-transition="flip" data-direction="reverse">Zurück</a></li>
-                <li><a id="zaehlerstand_bearbeiten_loeschen" href="#zaehlerstand_uebersicht" data-icon="remove" data-transition="flip" data-direction="reverse">Löschen</a></li>
-                <li><a id="zaehlerstand_bearbeiten_speichern" href="#zaehlerstand_uebersicht" data-icon="ok" data-transition="flip" data-direction="reverse">Speichern</a></li>
+                <li><a id="zaehlerstand_bearbeiten_loeschen" data-icon="remove" data-transition="flip" data-direction="reverse">Löschen</a></li>
+                <li><a id="zaehlerstand_bearbeiten_speichern" data-icon="ok" data-transition="flip" data-direction="reverse">Speichern</a></li>
             </ul>
         </div>
     </div>
